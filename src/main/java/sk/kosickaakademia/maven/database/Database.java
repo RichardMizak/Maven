@@ -15,8 +15,11 @@ public class Database {
     public Connection getConn(){
         try {
             Connection conn= DriverManager.getConnection(url,username,password);
+            log.print("Connection success.");
+            return conn;
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            log.error(throwables.toString());
+
         }
     }
     public void closeConn(Connection conn){
