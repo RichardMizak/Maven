@@ -7,9 +7,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
-    private String url = "jdbc:mysql://itsovy.sk:3306/chat2021";
-    private String username = "mysqluser";
-    private String password = "Kosice2021!";
+    private String url = "";
+    private String username = "";
+    private String password = "";
 
     Log log=new Log();
     public Connection getConn(){
