@@ -1,24 +1,26 @@
 package sk.kosickaakademia.maven.Users;
 
+import sk.kosickaakademia.maven.Gender;
+
 public class User {
     private int id;
     private String fname;
     private String lname;
-    private boolean gendre;
+    private Gender gender;
     private int age;
 
-    public User(int id, String fname, String lname, boolean gendre, int age) {
+    public User(int id, String fname, String lname, int gender, int age) {
         this.id = id;
         this.fname = fname;
         this.lname = lname;
-        this.gendre = gendre;
+        this.gender = gender==0 ? Gender.MALE  : gender==1 ? Gender.FEMALE : Gender.OTHER;
         this.age = age;
     }
 
-    public User(String fname, String lname, boolean gendre, int age) {
+    public User(String fname, String lname, int gender, int age) {
         this.fname = fname;
         this.lname = lname;
-        this.gendre = gendre;
+        this.gender = gender==0 ? Gender.MALE  : gender==1 ? Gender.FEMALE : Gender.OTHER;
         this.age = age;
     }
 
@@ -34,8 +36,8 @@ public class User {
         return lname;
     }
 
-    public boolean isGendre() {
-        return gendre;
+    public Gender getGender() {
+        return gender;
     }
 
     public int getAge() {
