@@ -10,5 +10,6 @@ public enum Gender {
 
     public int getValue() {
         return value;
+
     }
 }
