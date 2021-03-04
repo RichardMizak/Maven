@@ -5,10 +5,9 @@ import sk.kosickaakademia.maven.log.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class Database {
@@ -18,7 +17,10 @@ public class Database {
 //-----------------------------------------------------------------------
     Log log=new Log();
     private final String query="INSERT INTO user (fname, lname, age, gender) " +
-            " VALUES ( ?, ?, ?, ?)";
+                                " VALUES ( ?, ?, ?, ?)";
+    private final String female="SELECT * FROM user WHERE gender = 1";
+    private final String male="SELECT * FROM user WHERE gender = 0";
+    private final String other="SELECT * FROM user WHERE gender = 2";
 //-----------------------------------------------------------------------
     public Connection getConn(){
         try {
@@ -57,6 +59,82 @@ public boolean insertNewUser(User user){
     }
     return false;
 }
+    //---------------------------------------------------------------------------
+    private List<User> executeSelect(PreparedStatement ps) {
+        List<User> userList=new ArrayList<>();
+        int result = 0;
+        try {
+            ResultSet rs = ps.executeQuery();
+            if(rs!=null) {
+                while(rs.next()) {
+                    result++;
+                    int id=rs.getInt("id");
+                    String fName=rs.getString("fName");
+                    String lName=rs.getString("lName");
+                    int age=rs.getInt("age");
+                    int gender=rs.getInt("gender");
+                    userList.add(new User(id,fName,lName,age,gender));
+                    System.out.println("Number of results: "+result);
+                    System.out.println(id+" "+fName+" "+lName+" "+age+" "+gender);
+                }
+            } else {
+                System.out.println("No users found.");
+                return null;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        if(userList.size() != 0) {
+            return userList;
+        } else {
+            System.out.println("No users found.");
+            return null;
+        }
+    }
+    //---------------------------------------------------------------------------
+    public List<User> getFemales() {
+
+        try {
+            PreparedStatement ps = getConn().prepareStatement(female);
+            return executeSelect(ps);
+        } catch (Exception ex) {
+        }
+        return null;
+    }
+    //---------------------------------------------------------------------------
+    public List<User> getMales() {
+        try {
+            PreparedStatement ps = getConn().prepareStatement(male);
+            return executeSelect(ps);
+        }catch(Exception ex) {
+        }
+        return null;
+    }
+    //---------------------------------------------------------------------------
+    public List<User> getOther() {
+        try {
+            PreparedStatement ps = getConn().prepareStatement(other);
+            return executeSelect(ps);
+        }catch(Exception ex) {
+        }
+        return null;
+    }
+//---------------------------------------------------------------------------
+    public boolean changeAge(int id,int newAge){
+        return false;
+    }
+//---------------------------------------------------------------------------
+    public User getUserById(int id){
+        return null;
+    }
+//---------------------------------------------------------------------------
+    public User getUser(String pattern){
+        return null;
+    }
+//---------------------------------------------------------------------------
+    public List<User> getAllUsers(){
+        return null;
+    }
 //---------------------------------------------------------------------------
     public void closeConn(Connection conn){
         if(conn!=null){

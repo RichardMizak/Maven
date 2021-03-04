@@ -43,4 +43,9 @@ public class User {
     public int getAge() {
         return age;
     }
+    @Override
+    public String toString() {
+        return "User"+id+" "+fname+" "+lname+
+                "Age "+age+" Gender"+gender;
+    }
 }
