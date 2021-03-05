@@ -21,9 +21,13 @@ public class Database {
     private final String female="SELECT * FROM user WHERE gender = 1";
     private final String male="SELECT * FROM user WHERE gender = 0";
     private final String other="SELECT * FROM user WHERE gender = 2";
+    private final String usersId="SELECT * FROM user WHERE id = ?";
+    private final String userPattern="SELECT * FROM user WHERE (fname, lname) = ?";
+    private final String allUsers="SELECT * FROM user ";
+    private final String usersByAge = "SELECT * FROM user WHERE age >= ? AND age <= ?";
 //-----------------------------------------------------------------------
     public Connection getConn(){
-        try {
+        try{
             Properties props=new Properties();
             InputStream loader=getClass().getClassLoader().getResourceAsStream("database.properties");
             props.load(loader);
@@ -33,7 +37,7 @@ public class Database {
             Connection conn=DriverManager.getConnection(url,username,password);
             log.print("Connection success.");
             return conn;
-        } catch (SQLException | IOException throwables) {
+        }catch(SQLException | IOException throwables){
             log.error(throwables.toString());
 
         }
@@ -63,9 +67,9 @@ public boolean insertNewUser(User user){
     private List<User> executeSelect(PreparedStatement ps) {
         List<User> userList=new ArrayList<>();
         int result = 0;
-        try {
+        try{
             ResultSet rs = ps.executeQuery();
-            if(rs!=null) {
+            if(rs!=null){
                 while(rs.next()) {
                     result++;
                     int id=rs.getInt("id");
@@ -77,45 +81,47 @@ public boolean insertNewUser(User user){
                     System.out.println("Number of results: "+result);
                     System.out.println(id+" "+fName+" "+lName+" "+age+" "+gender);
                 }
-            } else {
+            }else{
                 System.out.println("No users found.");
                 return null;
             }
-        } catch (SQLException ex) {
+        }catch(SQLException ex){
             ex.printStackTrace();
         }
-        if(userList.size() != 0) {
+        if(userList.size()!=0){
             return userList;
-        } else {
+        }else{
             System.out.println("No users found.");
             return null;
         }
     }
     //---------------------------------------------------------------------------
     public List<User> getFemales() {
-
         try {
-            PreparedStatement ps = getConn().prepareStatement(female);
+            PreparedStatement ps=getConn().prepareStatement(female);
             return executeSelect(ps);
         } catch (Exception ex) {
+            log.error(ex.toString());
         }
         return null;
     }
     //---------------------------------------------------------------------------
     public List<User> getMales() {
         try {
-            PreparedStatement ps = getConn().prepareStatement(male);
+            PreparedStatement ps=getConn().prepareStatement(male);
             return executeSelect(ps);
         }catch(Exception ex) {
+            log.error(ex.toString());
         }
         return null;
     }
     //---------------------------------------------------------------------------
     public List<User> getOther() {
         try {
-            PreparedStatement ps = getConn().prepareStatement(other);
+            PreparedStatement ps=getConn().prepareStatement(other);
             return executeSelect(ps);
         }catch(Exception ex) {
+            log.error(ex.toString());
         }
         return null;
     }
@@ -125,16 +131,46 @@ public boolean insertNewUser(User user){
     }
 //---------------------------------------------------------------------------
     public User getUserById(int id){
+        try {
+            PreparedStatement ps=getConn().prepareStatement(usersId);
+            ps.setInt(1,id);
+            return (User) executeSelect(ps);
+        }catch(Exception ex) {
+        }
         return null;
     }
 //---------------------------------------------------------------------------
-    public User getUser(String pattern){
+    public List<User> getUser(String pattern){
+        try {
+            PreparedStatement ps=getConn().prepareStatement(userPattern);
+            return executeSelect(ps);
+        }catch(Exception ex) {
+        }
         return null;
     }
 //---------------------------------------------------------------------------
     public List<User> getAllUsers(){
+        try {
+            PreparedStatement ps=getConn().prepareStatement(allUsers);
+            return executeSelect(ps);
+        }catch(Exception ex) {
+        }
         return null;
     }
+//---------------------------------------------------------------------------
+public List<User> getUsersByAge(int from, int to){
+        if(to<from)
+        return null;
+    try {
+        PreparedStatement ps=getConn().prepareStatement(usersByAge);
+        ps.setInt(1,from);
+        ps.setInt(2,to);
+        return executeSelect(ps);
+    }catch(Exception ex){
+        log.error(ex.toString());
+    }
+    return null;
+}
 //---------------------------------------------------------------------------
     public void closeConn(Connection conn){
         if(conn!=null){
