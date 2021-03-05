@@ -16,15 +16,14 @@ public class Database {
     private String password = "Kosice2021!";
 //-----------------------------------------------------------------------
     Log log=new Log();
-    private final String query="INSERT INTO user (fname, lname, age, gender) " +
-                                " VALUES ( ?, ?, ?, ?)";
+    private final String query="INSERT INTO user (fname, lname, age, gender) VALUES ( ?, ?, ?, ?)";
     private final String female="SELECT * FROM user WHERE gender = 1";
     private final String male="SELECT * FROM user WHERE gender = 0";
     private final String other="SELECT * FROM user WHERE gender = 2";
     private final String usersId="SELECT * FROM user WHERE id = ?";
     private final String userPattern="SELECT * FROM user WHERE (fname, lname) = ?";
     private final String allUsers="SELECT * FROM user ";
-    private final String usersByAge = "SELECT * FROM user WHERE age >= ? AND age <= ?";
+    private final String usersByAge ="SELECT * FROM user WHERE age >= ? AND age <= ?";
 //-----------------------------------------------------------------------
     public Connection getConn(){
         try{
