@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class Database {
-    private String url = "jdbc:mysql://itsovy.sk:3306/chat2021";
-    private String username = "mysqluser";
-    private String password = "Kosice2021!";
+
 //-----------------------------------------------------------------------
     Log log=new Log();
     private final String query="INSERT INTO user (fname, lname, age, gender) VALUES ( ?, ?, ?, ?)";
