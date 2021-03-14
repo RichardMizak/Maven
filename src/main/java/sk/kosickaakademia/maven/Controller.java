@@ -5,11 +5,13 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sk.kosickaakademia.maven.Users.User;
+import sk.kosickaakademia.maven.database.Database;
 import sk.kosickaakademia.maven.log.Log;
+import sk.kosickaakademia.maven.util.Util;
+
+import java.util.List;
 
 @RestController
 public class Controller {
@@ -51,6 +53,30 @@ public class Controller {
         return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body(null);
 
 }
+//----------------------------------------------------------------------------------------------------------------------
+    @GetMapping("/users")
+    public ResponseEntity<String> users(){
+        List<User> list=new Database().getAllUsers();
+        String json=new Util().getJSON(list);
+        return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
+    }
+//----------------------------------------------------------------------------------------------------------------------
+    @GetMapping("/users/{gender}")
+    public ResponseEntity<String> usersByGender(@PathVariable String gender){
+        if(gender=="male"){
+            List<User> list=new Database().getMales();
+            String json=new Util().getJSON(list);
+            return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
+        }else if(gender=="female"){
+            List<User> list=new Database().getFemales();
+            String json=new Util().getJSON(list);
+            return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
+        }else
+
+        return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(null);
+    }
+//----------------------------------------------------------------------------------------------------------------------
+
 }
 
 
