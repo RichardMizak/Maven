@@ -21,6 +21,7 @@ public class Database {
     private final String usersId="SELECT * FROM user WHERE id = ?";
     private final String userPattern="SELECT * FROM user WHERE (fname, lname) = ?";
     private final String allUsers="SELECT * FROM user ";
+    private final String newUserAge = "UPDATE user SET age = ? WHERE id = ?";
     private final String usersByAge ="SELECT * FROM user WHERE age >= ? AND age <= ?";
 //-----------------------------------------------------------------------
     public Connection getConn(){
@@ -94,9 +95,11 @@ public boolean insertNewUser(User user){
     }
     //---------------------------------------------------------------------------
     public List<User> getFemales() {
-        try {
-            PreparedStatement ps=getConn().prepareStatement(female);
-            return executeSelect(ps);
+        try(Connection conn = getConn()){
+            if (conn != null) {
+                PreparedStatement ps = conn.prepareStatement(female);
+                return executeSelect(ps);
+            }
         } catch (Exception ex) {
             log.error(ex.toString());
         }
@@ -104,9 +107,11 @@ public boolean insertNewUser(User user){
     }
     //---------------------------------------------------------------------------
     public List<User> getMales() {
-        try {
-            PreparedStatement ps=getConn().prepareStatement(male);
-            return executeSelect(ps);
+        try(Connection conn = getConn()) {
+            if (conn != null) {
+                PreparedStatement ps = conn.prepareStatement(male);
+                return executeSelect(ps);
+            }
         }catch(Exception ex) {
             log.error(ex.toString());
         }
@@ -114,9 +119,11 @@ public boolean insertNewUser(User user){
     }
     //---------------------------------------------------------------------------
     public List<User> getOther() {
-        try {
-            PreparedStatement ps=getConn().prepareStatement(other);
-            return executeSelect(ps);
+        try (Connection conn = getConn()){
+            if (conn != null) {
+                PreparedStatement ps = conn.prepareStatement(other);
+                return executeSelect(ps);
+            }
         }catch(Exception ex) {
             log.error(ex.toString());
         }
@@ -124,32 +131,53 @@ public boolean insertNewUser(User user){
     }
 //---------------------------------------------------------------------------
     public boolean changeAge(int id,int newAge){
+        if (id < 0 || newAge < 1 || newAge >= 100)
+            return false;
+        try (Connection conn=getConn()){
+            if (conn != null) {
+                PreparedStatement ps = conn.prepareStatement(newUserAge);
+                ps.setInt(1, newAge);
+                ps.setInt(2, id);
+                int update=ps.executeUpdate();
+                log.print("Updated age for id: " + id);
+                return update==1;
+            }
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
         return false;
     }
-//---------------------------------------------------------------------------
+
+    //---------------------------------------------------------------------------
     public User getUserById(int id){
-        try {
-            PreparedStatement ps=getConn().prepareStatement(usersId);
-            ps.setInt(1,id);
-            return (User) executeSelect(ps);
+        try (Connection conn = getConn()) {
+            if (conn != null) {
+                PreparedStatement ps = conn.prepareStatement(usersId);
+                ps.setInt(1, id);
+                return (User) executeSelect(ps);
+            }
         }catch(Exception ex) {
         }
         return null;
     }
 //---------------------------------------------------------------------------
     public List<User> getUser(String pattern){
-        try {
-            PreparedStatement ps=getConn().prepareStatement(userPattern);
-            return executeSelect(ps);
+        try (Connection conn = getConn()) {
+            if (conn != null) {
+                    PreparedStatement ps = conn.prepareStatement(userPattern);
+                    return executeSelect(ps);
+                }
         }catch(Exception ex) {
         }
         return null;
     }
 //---------------------------------------------------------------------------
     public List<User> getAllUsers(){
-        try {
-            PreparedStatement ps=getConn().prepareStatement(allUsers);
-            return executeSelect(ps);
+        try (Connection conn = getConn()) {
+            if (conn != null) {
+                PreparedStatement ps = conn.prepareStatement(allUsers);
+                return executeSelect(ps);
+            }
         }catch(Exception ex) {
         }
         return null;
@@ -158,11 +186,13 @@ public boolean insertNewUser(User user){
 public List<User> getUsersByAge(int from, int to){
         if(to<from)
         return null;
-    try {
-        PreparedStatement ps=getConn().prepareStatement(usersByAge);
-        ps.setInt(1,from);
-        ps.setInt(2,to);
-        return executeSelect(ps);
+   try(Connection conn = getConn()){
+        if(conn!=null){
+            PreparedStatement ps=conn.prepareStatement(usersByAge);
+            ps.setInt(1, from);
+            ps.setInt(2, to);
+            return executeSelect(ps);
+        }
     }catch(Exception ex){
         log.error(ex.toString());
     }

@@ -76,8 +76,47 @@ public class Controller {
         return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(null);
     }
 //----------------------------------------------------------------------------------------------------------------------
-
+    @GetMapping("/users/age")
+    public ResponseEntity<String> usersByAge(@RequestParam(value="from")int a,@RequestParam(value="to")int b){
+    if (a>b){
+        return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("");
+    }
+    List<User> list=new Database().getUsersByAge(a, b);
+    String json=new Util().getJSON(list);
+    return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
 }
+//----------------------------------------------------------------------------------------------------------------------
+    @PutMapping("/users/{id}")
+    public ResponseEntity<String> changeUserAge(@PathVariable int id,@RequestBody String body) {
+        JSONObject o=new JSONObject();
+        try {
+             o= (JSONObject) new JSONParser().parse(body);
+             return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("");
+        }catch(ParseException e) {
+            e.printStackTrace();
+        }
+        String data=String.valueOf(o.get("newAge"));
+        System.out.println("data:"+data);
+        if(data.equalsIgnoreCase("null")){
+            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("");
+        }
+        int newAge = Integer.parseInt(data);
+        if(newAge<1){
+            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("");
+        }
+        boolean result = new Database().changeAge(id,newAge);
+        if(result){
+            return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body("");
+            }else{
+                return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body("");
+                }
+    }
+}
+
+
+
+
+
 
 
 
