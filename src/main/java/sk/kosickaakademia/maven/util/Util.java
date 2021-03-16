@@ -2,8 +2,10 @@ package sk.kosickaakademia.maven.util;
 
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import sk.kosickaakademia.maven.Gender;
 import sk.kosickaakademia.maven.Users.User;
 
+import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -28,8 +30,6 @@ public class Util {
         object.put("users",jsonArray);
         return object.toString();
     }
-
-
     //-----------------------------------------------------------------------------
     public String getJSON(User user){
         if(user==null)
@@ -48,7 +48,6 @@ public class Util {
         object.put("users",jsonArray);
         return object.toString();
     }
-
     //-----------------------------------------------------------------------------
     public String getTimeAndDate(){
         DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -62,4 +61,36 @@ public class Util {
         }
         return name.substring(0, 1).toUpperCase()+name.substring(1);
     }
+    //-----------------------------------------------------------------------------
+    public String getOverview(List<User> list) {
+    int count=list.size();
+    int male=0;
+    int female=0;
+    int sumage=0;
+    int other=0;
+    int min=count>0?list.get(0).getAge():0;
+    int max=count>0?list.get(0).getAge():0;
+    for(User u:list){
+        if (u.getGender()== Gender.FEMALE) female++;
+        else if (u.getGender()== Gender.MALE) male++;
+        else if (u.getGender()== Gender.OTHER) other++;
+        sumage=sumage+u.getAge();
+        if(min>u.getAge()){
+            min=u.getAge();
+        }
+        if(max<u.getAge()){
+            max=u.getAge();
+        }
+        double avarage=(double)sumage/count;
+        JSONObject o=new JSONObject();
+        o.put("count",count);
+        o.put("male",male);
+        o.put("female",female);
+        o.put("other",other);
+        o.put("sumage",sumage);
+        o.put("avarage",avarage);
+        return o.toString();
+        }
+    return null;
+}
 }

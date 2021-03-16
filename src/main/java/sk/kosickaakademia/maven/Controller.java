@@ -111,6 +111,13 @@ public class Controller {
                 return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body("");
                 }
     }
+//----------------------------------------------------------------------------------------------------------------------
+  /*  @GetMapping("/")
+    public ResponseEntity<String> getOverview(){
+        List<User> list=new Database().getAllUsers();
+        String json=new Util().getOverview();
+        return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json.toString());
+    }*/
 }
 
 
