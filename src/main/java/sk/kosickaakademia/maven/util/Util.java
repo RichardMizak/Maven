@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Random;
 
 public class Util {
     public String getJSON(List<User> list){
@@ -93,4 +94,18 @@ public class Util {
         }
     return null;
 }
+//---------------------------------------------------------------------------------------------
+    public String generateToken(){
+        Random r=new Random();
+        String token="";
+        for (int i=0;i<40;i++){
+            int random=r.nextInt(3);
+            switch (random){
+                case 0:token=token+String.valueOf(r.nextInt(26)+65);break;
+                case 1:token=token+String.valueOf(r.nextInt(10)+97);break;
+                case 2:token=token+String.valueOf(r.nextInt(26)+48);break;
+            }
+        }
+        return token;
+    }
 }
