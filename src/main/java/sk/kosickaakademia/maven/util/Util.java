@@ -101,9 +101,12 @@ public class Util {
         for (int i=0;i<40;i++){
             int random=r.nextInt(3);
             switch (random){
-                case 0:token=token+String.valueOf(r.nextInt(26)+65);break;
-                case 1:token=token+String.valueOf(r.nextInt(10)+97);break;
-                case 2:token=token+String.valueOf(r.nextInt(26)+48);break;
+                case 0:token=token+String.valueOf(r.nextInt(26)+65);
+                break;
+                case 1:token=token+String.valueOf(r.nextInt(10)+97);
+                break;
+                case 2:token=token+String.valueOf(r.nextInt(26)+48);
+                break;
             }
         }
         return token;

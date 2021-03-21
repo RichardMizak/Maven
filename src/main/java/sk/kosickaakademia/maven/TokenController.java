@@ -6,6 +6,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.kosickaakademia.maven.log.Log;
+import sk.kosickaakademia.maven.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,16 +16,18 @@ public class TokenController {
     private final String PWD="Kosice2021";
     Map<String,String> map=new HashMap<>();
     Log log=new Log();
+    //---------------------------------------------------------------------------------------
     @GetMapping("/secret")
     public String secret(@RequestHeader("token") String h){
         String token=h.substring(7);
         for (Map.Entry<String,String> entry:map.entrySet()){
             if (entry.getValue().equalsIgnoreCase(token)){
-                return "secret";
+                return "token";
             }
         }
         return "401";
     }
+    //--------------------------------------------------------------------------------------
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody String aut){
         JSONObject o = null;
@@ -38,6 +41,11 @@ public class TokenController {
             }else{
                 if (pwd.equals(PWD)){
                     log.print("Logged.");
+                    String token=new Util().generateToken();
+                    map.put(login,token);
+                    JSONObject o2=new JSONObject();
+                    o2.put("login",login);
+                    o2.put("token",token);
                     return ResponseEntity.status(200).body("");
                 }else{
                     log.error("Wrong password");

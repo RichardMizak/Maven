@@ -25,9 +25,9 @@ public class Controller {
             String gender = (String.valueOf(o.get("Gender")));
             int age = Integer.parseInt((String) o.get(fname));
             if (fname == null || lname == null || lname.trim().length() == 0 || fname.trim().length() == 0 || age <=0) {
-                log.error("Missing Firstname or Lastname or incorrect age.");
+                log.error("Missing name or genre.");
                 JSONObject object = new JSONObject();
-                object.put("ERROR", "Missing Firstname or Lastname");
+                object.put("ERROR", "Missing name or genre");
                 return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body(o.toJSONString());
             }
             Gender g;
@@ -50,7 +50,7 @@ public class Controller {
             return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body(null);
 
         }
-        return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body(null);
+        return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(null);
 
 }
 //----------------------------------------------------------------------------------------------------------------------
@@ -112,12 +112,12 @@ public class Controller {
                 }
     }
 //----------------------------------------------------------------------------------------------------------------------
-  /*  @GetMapping("/")
+    @GetMapping("/")
     public ResponseEntity<String> getOverview(){
         List<User> list=new Database().getAllUsers();
-        String json=new Util().getOverview();
+        String json=new Util().getOverview(list);
         return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json.toString());
-    }*/
+    }
 }
 
 
