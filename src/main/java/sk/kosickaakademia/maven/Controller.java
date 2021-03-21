@@ -19,14 +19,14 @@ public class Controller {
     @PostMapping("/user/add")
     public ResponseEntity<String> addUser(@RequestBody String input) {
         try {
-            JSONObject o = (JSONObject) new JSONParser().parse(input);
-            String fname = (String.valueOf(o.get("Firstname")));
-            String lname = (String.valueOf(o.get("Lastname")));
-            String gender = (String.valueOf(o.get("Gender")));
-            int age = Integer.parseInt((String) o.get(fname));
-            if (fname == null || lname == null || lname.trim().length() == 0 || fname.trim().length() == 0 || age <=0) {
+            JSONObject o=(JSONObject) new JSONParser().parse(input);
+            String fname=(String.valueOf(o.get("Firstname")));
+            String lname=(String.valueOf(o.get("Lastname")));
+            String gender=(String.valueOf(o.get("Gender")));
+            int age= Integer.parseInt(String.valueOf(o.get("Age")));
+            if (fname==null || lname==null || lname.trim().length()==0 || fname.trim().length()==0 || age<=0) {
                 log.error("Missing name or genre.");
-                JSONObject object = new JSONObject();
+                JSONObject object=new JSONObject();
                 object.put("ERROR", "Missing name or genre");
                 return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body(o.toJSONString());
             }
@@ -45,6 +45,7 @@ public class Controller {
                 }
             }
             User user=new User(fname,lname,age,g.getValue());
+            new Database().insertNewUser(user);
         } catch (ParseException e){
         log.error("ERROR");
             return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body(null);
@@ -86,8 +87,8 @@ public class Controller {
     return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
 }
 //----------------------------------------------------------------------------------------------------------------------
-    @PutMapping("/users/{id}")
-    public ResponseEntity<String> changeUserAge(@PathVariable int id,@RequestBody String body) {
+    @PutMapping("/user/{id}")
+    public ResponseEntity<String> changeUserAge(@PathVariable Integer id,@RequestBody String body) {
         JSONObject o=new JSONObject();
         try {
              o= (JSONObject) new JSONParser().parse(body);
@@ -100,11 +101,12 @@ public class Controller {
         if(data.equalsIgnoreCase("null")){
             return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("");
         }
-        int newAge = Integer.parseInt(data);
+        int newAge=Integer.parseInt(data);
         if(newAge<1){
             return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("");
         }
         boolean result = new Database().changeAge(id,newAge);
+        System.out.println(result);
         if(result){
             return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body("");
             }else{
