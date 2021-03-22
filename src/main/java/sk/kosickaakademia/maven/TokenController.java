@@ -3,6 +3,7 @@ package sk.kosickaakademia.maven;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.kosickaakademia.maven.log.Log;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 @RestController
 public class TokenController {
-    private final String PWD="Kosice2021";
+    private final String PWD="heslo123";
     Map<String,String> map=new HashMap<>();
     Log log=new Log();
     //---------------------------------------------------------------------------------------
@@ -56,5 +57,22 @@ public class TokenController {
             e.printStackTrace();
         }
         return null;
+    }
+    @DeleteMapping("/logout")
+    public ResponseEntity<String> logout(@RequestBody String data){
+        JSONObject o = null;
+        try {
+            o = (JSONObject) new JSONParser().parse(data);
+            String login=o.get("login").toString();
+            if (!login.equals("null")){
+                map.remove(login);
+                System.out.println("Logout");
+            }else{
+                System.out.println("User don't exist");
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body("Success");
     }
 }

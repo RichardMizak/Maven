@@ -5,13 +5,19 @@ import org.apache.tapestry5.json.JSONObject;
 import sk.kosickaakademia.maven.Gender;
 import sk.kosickaakademia.maven.Users.User;
 
+import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
 public class Util {
+    private static final SecureRandom secureRandom = new SecureRandom();
+    private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
+
+
     public String getJSON(List<User> list){
         if(list.isEmpty())
             return "{}";
@@ -96,19 +102,9 @@ public class Util {
 }
 //---------------------------------------------------------------------------------------------
     public String generateToken(){
-        Random r=new Random();
-        String token="";
-        for (int i=0;i<40;i++){
-            int random=r.nextInt(3);
-            switch (random){
-                case 0:token=token+String.valueOf(r.nextInt(26)+65);
-                break;
-                case 1:token=token+String.valueOf(r.nextInt(10)+97);
-                break;
-                case 2:token=token+String.valueOf(r.nextInt(26)+48);
-                break;
-            }
+        byte[] token = new byte[28];
+        secureRandom.nextBytes(token);
+        System.out.println(base64Encoder.encodeToString(token));
+        return base64Encoder.encodeToString(token);
         }
-        return token;
-    }
 }

@@ -2,6 +2,7 @@ package sk.kosickaakademia.maven.database;
 
 import sk.kosickaakademia.maven.Users.User;
 import sk.kosickaakademia.maven.log.Log;
+import sk.kosickaakademia.maven.util.Util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +47,8 @@ public boolean insertNewUser(User user){
     Connection conn=getConn();
     if(conn!=null){
         try{
+            String fname=new Util().nameNormalizer(user.getFname());
+            String lname=new Util().nameNormalizer(user.getLname());
             PreparedStatement ps=conn.prepareStatement(query);
             ps.setString(1,user.getFname());
             ps.setString(2,user.getLname());
