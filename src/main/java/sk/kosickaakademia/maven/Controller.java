@@ -25,10 +25,8 @@ public class Controller {
             String gender=(String.valueOf(o.get("Gender")));
             int age= Integer.parseInt(String.valueOf(o.get("Age")));
             if (fname==null || lname==null || lname.trim().length()==0 || fname.trim().length()==0 || age<=0) {
-                log.error("Missing name or genre.");
-                JSONObject object=new JSONObject();
-                object.put("ERROR", "Missing name or genre");
-                return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body(o.toJSONString());
+                log.error("Missing Firstname or Lastname or Age or Gender.");
+                return ResponseEntity.status(404).body("ERROR");
             }
             Gender g;
             if(gender==null){
@@ -47,9 +45,7 @@ public class Controller {
             User user=new User(fname,lname,age,g.getValue());
             new Database().insertNewUser(user);
         } catch (ParseException e){
-        log.error("ERROR");
-            return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body(null);
-
+            return ResponseEntity.status(404).body("Wrong input.");
         }
         return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(null);
 
@@ -63,18 +59,21 @@ public class Controller {
     }
 //----------------------------------------------------------------------------------------------------------------------
     @GetMapping("/users/{gender}")
-    public ResponseEntity<String> usersByGender(@PathVariable String gender){
-        if(gender=="male"){
-            List<User> list=new Database().getMales();
-            String json=new Util().getJSON(list);
+    public ResponseEntity<String> usersByGender(@PathVariable String gender) {
+        if (gender == "male") {
+            List<User> list = new Database().getMales();
+            String json = new Util().getJSON(list);
             return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
-        }else if(gender=="female"){
-            List<User> list=new Database().getFemales();
-            String json=new Util().getJSON(list);
+        } else if (gender == "female") {
+            List<User> list = new Database().getFemales();
+            String json = new Util().getJSON(list);
+            return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
+        } else if (gender == "other"){
+            List<User> list = new Database().getFemales();
+            String json = new Util().getJSON(list);
             return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
         }else
-
-        return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body(null);
+        return ResponseEntity.status(400).body("ERROR");
     }
 //----------------------------------------------------------------------------------------------------------------------
     @GetMapping("/users/age")
@@ -92,25 +91,23 @@ public class Controller {
         JSONObject o=new JSONObject();
         try {
              o= (JSONObject) new JSONParser().parse(body);
-             return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("");
+             return ResponseEntity.status(400).body("ERROR");
         }catch(ParseException e) {
             e.printStackTrace();
         }
         String data=String.valueOf(o.get("newAge"));
-        System.out.println("data:"+data);
         if(data.equalsIgnoreCase("null")){
-            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("");
+            return ResponseEntity.status(400).body("ERROR");
         }
         int newAge=Integer.parseInt(data);
         if(newAge<1){
-            return ResponseEntity.status(400).contentType(MediaType.APPLICATION_JSON).body("");
+            return ResponseEntity.status(400).body("ERROR");
         }
         boolean result = new Database().changeAge(id,newAge);
-        System.out.println(result);
         if(result){
-            return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body("");
+            return ResponseEntity.status(200).body("Success");
             }else{
-                return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body("");
+                return ResponseEntity.status(404).body("ERROR");
                 }
     }
 //----------------------------------------------------------------------------------------------------------------------
@@ -120,12 +117,18 @@ public class Controller {
         String json=new Util().getOverview(list);
         return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json.toString());
     }
+    //----------------------------------------------------------------------------------------------------------------------    
+    @GetMapping(value = "/users", params = "type")
+    public ResponseEntity<String> getUsersXML(@RequestParam(value = "type") String type){
+        if(type == null || !type.equals("xml")) {
+            return ResponseEntity.status(400).body("Wrong type");
+        }else{
+            Database database=new Database();
+            List<User> list = database.getAllUsers();
+            String json=new Util().getJSON(list);
+            String xml=new Util().convertToXML(json);
+            System.out.println(xml);
+        }
+        return ResponseEntity.status(200).contentType(MediaType.APPLICATION_XML).body(getUsersXML("xml").toString());
+    }
 }
-
-
-
-
-
-
-
-
