@@ -75,4 +75,29 @@ public class TokenController {
         }
         return ResponseEntity.status(201).contentType(MediaType.APPLICATION_JSON).body("Success");
     }
+        @GetMapping("/info")
+    public ResponseEntity<String> getFavourites(@RequestBody String body) {
+        JSONObject info = new JSONObject();
+        info.put("Firstname", "Ricard");
+        info.put("Lastname", "Mižák");
+        try {
+            JSONObject object = (JSONObject) new JSONParser().parse(body);
+            String token = String.valueOf(object.get("token"));
+            if (!token.isEmpty()) {
+                for (Map.Entry<String, String> entry : map.entrySet())
+                    if (entry.getValue().equals(token)) {
+                        info.put("Favourite car brand", "Mazda");
+                        info.put("Favourite film", "Seven");
+                        info.put("Favourite director", "Christopher Nolan");
+                        info.put("Favourite game", "DOOM");
+                        info.put("Favourite food", "Pancakes");
+                        info.put("Favourite drink", "Beer");
+                    }
+            }
+            return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(info.toJSONString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("ERROR");
+        }
+    }
 }
