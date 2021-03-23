@@ -107,4 +107,10 @@ public class Util {
         System.out.println(base64Encoder.encodeToString(token));
         return base64Encoder.encodeToString(token);
         }
+//-----------------------------------------------------------------------------------------------    
+    public static String convertToXML(String json) throws JSONException {
+        JSONObject jsonObject = new JSONObject(json);
+        String xml =XML.toString(jsonObject);
+        return xml;
+    }    
 }
