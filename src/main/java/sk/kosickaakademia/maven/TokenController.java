@@ -38,21 +38,30 @@ public class TokenController {
             String pwd = (String.valueOf(o.get("Password")));
             if (pwd.equals("null")||login.equals("null")){
                 log.error("Missing login or password.");
-                return ResponseEntity.status(400).body("");
+                return ResponseEntity.status(400).body("ERROR");
             }else{
-                if (pwd.equals(PWD)){
-                    log.print("Logged.");
-                    String token=new Util().generateToken();
-                    map.put(login,token);
-                    JSONObject o2=new JSONObject();
-                    o2.put("login",login);
-                    o2.put("token",token);
-                    return ResponseEntity.status(200).body("");
+                Login l=new Login();
+                String attempt=l.loginUser(login,pwd);
+                if (attempt.equals("User is blocked")){
+                    return ResponseEntity.status(401).body("User "+login+" is blocked for 1 min.");
+                }else{
+                    if (attempt.equals("Wrong pwd")){
+                        return ResponseEntity.status(401).body("Wrong pwd");
+                    }
+                }
+            }if (pwd.equals(PWD)){
+                log.print("Logged.");
+                String token=new Util().generateToken();
+                map.put(login,token);
+                JSONObject o2=new JSONObject();
+                o2.put("login",login);
+                o2.put("token",token);
+                    return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(o2.toJSONString());
                 }else{
                     log.error("Wrong password");
-                    return ResponseEntity.status(401).body("");
+                    return ResponseEntity.status(401).body("ERROR");
                 }
-            }
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
