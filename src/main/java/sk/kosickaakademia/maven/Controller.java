@@ -132,4 +132,15 @@ public class Controller {
         }
         return ResponseEntity.status(200).contentType(MediaType.APPLICATION_XML).body(getUsersXML("xml").toString());
     }
+    //----------------------------------------------------------------------------------------------------------------------
+      @GetMapping("/user/{id}")
+    public ResponseEntity<String>getUserbyId(@PathVariable int id){
+        User user=new Database().getUserById(id);
+        if (user==null){
+            return ResponseEntity.status(400).body("User does not exist.");
+        }
+        String json=new Util().getJSON(user);
+        return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
+    }
+}
 }
