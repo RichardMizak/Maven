@@ -42,8 +42,9 @@ public class Controller {
                     }
                 }
             }
-            User user=new User(fname,lname,age,g.getValue());
+         User user=new User(fname,lname,g.getValue(),age);
             new Database().insertNewUser(user);
+            new DatabaseMONGO().insertUser(user);
         } catch (ParseException e){
             return ResponseEntity.status(404).body("Wrong input.");
         }
