@@ -142,5 +142,15 @@ public class Controller {
         String json=new Util().getJSON(user);
         return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
     }
-}
+      //----------------------------------------------------------------------------------------------------------------------
+    @GetMapping("/user/{pattern}")
+    public ResponseEntity<String> getUser(@PathVariable String pattern){
+        List<User> list = new Database().getUser(pattern);
+        if(pattern.equals("")){
+            return ResponseEntity.status(400).body("Empty input.");
+        }
+        String json = new Util().getJSON(list);
+        return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
+    }
+
 }
